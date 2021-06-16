@@ -1,0 +1,11 @@
+{% extends "overview/base.html"%}
+{% block content %}
+    <h2>Du har logget ut</h2>
+    <div class="border-top pt-3">
+        {% comment %} TODO: sett inn lenke {% endcomment %}
+        <small class="text-muted">
+            <a href="{% url 'login' %}">Logg inn på nytt</a>
+        </small>
+    </div>
+
+{% endblock content%}

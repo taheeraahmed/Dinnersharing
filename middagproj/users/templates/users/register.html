@@ -1,0 +1,22 @@
+{% extends "overview/base.html"%}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class ="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb 4">Bli med på å dele middager du og!</legend>
+                {{ form|crispy }}
+                {{ profile_form.as_p }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Registrer</button>
+            </div>
+        </form>
+        <div class="border-top pt-3">
+            <small class="text-muted">
+                Har du allerede en bruker? <a class="ml-2" href={% url 'login' %}>Logg inn</a>
+            </small>
+        </div>
+    </div>
+{% endblock content%}

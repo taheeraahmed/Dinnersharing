@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript jquery='full' %}
+
+    {% block extrahead %}
+    {% endblock %}
+
+     <!-- Required meta tags -->
+    <meta charset="utf-8">
+
+    <!-- TODO: legg til icon -->
+    <link rel="icon" href="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'overview/main.css' %}">
+
+    <title>Events</title>
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+            <div class="container">
+            <a class="navbar-brand mr-4" href="/">Middagsplanlegger</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggle">
+                <div class="navbar-nav mr-auto">
+                    <!-- <a class="nav-item nav-link" href="/">TMP</a> -->
+                    <!-- <a class="nav-item nav-link" href="/about">TMP</a> -->
+                </div>
+                <!-- Navbar Right Side -->
+                <div class="navbar-nav"> {% comment %} Denne delen endrer hva som står i navigation bar ettesom man er innlogget eller ikke{% endcomment %}
+                    {% if user.is_authenticated  %}
+                        <a class="nav-item nav-link" href="{% url 'contact' %}">Kontakt oss</a>
+                        <a class="nav-item nav-link" href="{% url 'event:eventform' %}">Legg til middagsarrangement</a>
+                        <a class="nav-item nav-link" href="{% url 'profile' user.id %}">Profil</a>
+                        <a class="nav-item nav-link" href="{% url 'logout' %}">Logg ut</a>
+
+                    {% else %}
+                        <a class="nav-item nav-link" href="{% url 'contact' %}">Kontakt oss</a>
+                        <a class="nav-item nav-link" href="{% url 'login' %}">Logg inn</a>
+                        <a class="nav-item nav-link" href="{% url 'register' %}">Registrer deg</a>
+                    {% endif %}
+                </div>
+            </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="container">
+        <div class="row">
+            <div class="col-md-12">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </main>
+
+    <div class="footer">
+        <!-- Footer -->
+        <footer class="page-footer font-small mdb-color pt-4 text-white">
+
+            <!-- Footer Links -->
+            <div class="container text-center text-md-left">
+
+                <!-- Footer links -->
+                <div class="row text-center text-md-left mt-3 pb-3">
+
+                    <!-- Grid column -->
+                    <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+                        <h6 class="text-uppercase mb-4 font-weight-bold text-white">Middagsdeling</h6>
+                        <p>Vi er en gruppe 42 i PU. Vi er 7 som prøver å lage en middagsdeling-nettside ved hjelp av <3 SCRUM <3,
+                            Sommerville og Scrum XP from the trenches </p>
+                    </div>
+                    <!-- Grid column -->
+
+                    <hr class="w-100 clearfix d-md-none">
+
+                    <!-- Grid column -->
+                    <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3 text-white">
+                        <h6 class="text-uppercase mb-4 font-weight-bold text-white">Om prosjektet</h6>
+                        <p>
+                            Noen syns det er gøy å lage middag. Andre syns det er kjedelig. Mange syns det er hyggelig å spise
+                            med andre. Derfor har vi skapt middagsdeling!
+                    </div>
+                    <!-- Grid column -->
+
+                    <hr class="w-100 clearfix d-md-none">
+
+                    <!-- Grid column -->
+                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
+                        <h6 class="text-uppercase mb-4 font-weight-bold text-white">Meny</h6>
+                        <p class="text-muted">
+                            <a href="/">Hjem</a>
+                        </p>
+                        <p>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'profile' user.pk %}">Profil</a>
+                            {% endif %}
+                        </p>
+                        <p>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'logout' %}">Logg ut</a>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- Grid column -->
+                    <hr class="w-100 clearfix d-md-none">
+
+                    <!-- Grid column -->
+                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
+                        <h6 class="text-uppercase mb-4 font-weight-bold text-white">Kontakt</h6>
+                        <p>
+                            <i class="fas fa-home mr-3"></i> Realfagsbygget på gløs</p>
+                        <p>
+                            <i class="fas fa-envelope mr-3"></i> middagsdeling@ntnu.no</p>
+                        <p>
+                            <i class="fas fa-phone mr-3"></i> + 47 949 86 709</p>
+                    </div>
+                    <!-- Grid column -->
+
+                </div>
+                <!-- Footer links -->
+
+                <hr>
+
+                <!-- Grid row -->
+                <div class="row d-flex align-items-center">
+
+                    <!-- Grid column -->
+                    <div class="col-md-7 col-lg-8">
+
+
+
+                    </div>
+                    <!-- Grid column -->
+
+                    <!-- Grid column -->
+                    <div class="col-md-5 col-lg-4 ml-lg-0">
+
+
+                    </div>
+                    <!-- Grid column -->
+
+                </div>
+                <!-- Grid row -->
+
+            </div>
+            <!-- Footer Links -->
+
+        </footer>
+        <!-- Footer -->
+    </div>
+</body>
+</html>

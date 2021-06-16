@@ -1,0 +1,39 @@
+{% extends "overview/base.html" %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block extrahead %}
+    {{ form.media }}
+    <title>Gi en anmeldelse</title>
+{% endblock %}
+{% block content %}
+    <div class ="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb 4">Skriv en anmeldelse av
+                    <a href="{% url 'event:eventdetail' event.pk %}">{{ event }}</a>
+                </legend>
+                {% bootstrap_form form %}
+            </fieldset>
+            <div class="form-group">
+                <button type="submit" class="btn btn-outline-info">Send inn</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const star = '\uf005';
+        let select = $("select");
+        select.addClass("fas").css("font-size", "1.25em").css("color", "#ffbe00");
+        options = $("option");
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === "") {
+                options[i].text = "Gi en verdi fra 0-5";
+            } else {
+                options[i].text = star.repeat(i - 1) + " " + options[i].value;
+            }
+        }
+    </script>
+
+{% endblock content %}

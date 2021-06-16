@@ -1,0 +1,174 @@
+{% extends "overview/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block extrahead %}
+    <title>{{ user_profile }} sin profil!</title>
+{% endblock %}
+{% block content %}
+    <div class="content-section">
+        <div class="media">
+            <div class="media-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="pl-0 col-3">
+                            <h2 class="account-heading">{{ user_profile.username }} </h2>
+                        </div>
+                        <div class="col-5">
+                            <div class="pl-0 container">
+                                <div class="pl-0 col">
+                                    <span class="pl-0 col-md-2" style="font-size: 2em; color: #ffbe00;">
+                                        <i class="fas fa-star"></i><a id="prof_rating"></a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-secondary">{{ user_profile.email }}</p>
+                <p class="text-secondary">Adresse: {{ user_profile.profile.address }}</p>
+                <p class="text-secondary">Allergier:
+                    {% for allergy in user_profile.profile.allergies.all %}
+                        <ul>
+                            <li><strong>{{ allergy }}</strong></li>
+                        </ul>
+                    {% empty %}
+                        <strong>Ingen</strong>
+                    {% endfor %}
+                </p>
+                {% if user == user_profile %}
+                    <p class="text-secondary">Du er meldt på til disse arrangementene:
+                        {% for event in user_profile.profile.events.all %}
+                            <ul>
+                                <li><strong><a class="article-title"
+                                               href="{% url 'event:eventdetail' event.id %}">{{ event }}</a></strong> {{ event.date }},
+                                    kl {{ event.time }}</li>
+                            </ul>
+                        {% empty %}
+                            <strong>Ingen</strong>
+                        {% endfor %}
+                {% else %}
+                    <p class="text-secondary">{{ user_profile }} er meldt på disse arrangementene:</p>
+                        {% for event in user_profile.profile.events.all %}
+                            <ul>
+                                <li><strong><a class="article-title"
+                                               href="{% url 'event:eventdetail' event.id %}">{{ event }}</a></strong> {{ event.date }},
+                                    kl {{ event.time }}</li>
+                            </ul>
+                        {% empty %}
+                            <strong>Ingen</strong>
+                        {% endfor %}
+                {% endif %}
+                </p>
+
+                <div class="accordion" id="accordion">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#ownEvents"
+                                        aria-expanded="true" aria-controls="collapseOne">
+                                    <i class="fa fa-plus"></i>
+                                    Dine arrangement
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="ownEvents" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                            {% for event in user_profile.event_set.all %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <a href="{% url 'event:eventdetail' event.id %}">{{ event }}</a>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <strong>Du har ikke opprettet noen arrangement</strong>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                {% if user == user_profile %}
+                                    <button class="btn btn-link" data-toggle="collapse" data-target="#reviewsMade"
+                                            aria-expanded="true" aria-controls="collapseTwo">
+                                        <i class="fa fa-plus"></i>
+                                        Hva andre har sagt om deg
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-link" data-toggle="collapse" data-target="#reviewsMade"
+                                            aria-expanded="true" aria-controls="collapseTwo">
+                                        <i class="fa fa-plus"></i>
+                                        Hva andre har sagt om {{ user_profile }}
+                                    </button>
+                                {% endif %}
+                            </h5>
+                        </div>
+                        <div id="reviewsMade" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                            {% if reviews is not None %}
+                                {% for review in reviews %}
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4><a href="{% url 'profile' review.user.id %}">{{ review.user }}</a> sa
+                                                dette om
+                                                <a href="{% url 'event:eventdetail' review.event.id %}">{{ review.event }}</a>:
+                                            </h4>
+                                            <p class="article-content">{{ review.body }}</p>
+                                            <p class="article-content">Vurdering: <strong>{{ review.rating }}</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <p style="white-space: normal" class="article-content">😭 Ingen anmeldelser
+                                                her
+                                                gitt 😭
+                                            </p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // have to parse the value given as arg from view, js requires . decimal separator
+        // but during the passing of the param, for some reason the number is changed from
+        // e.g. 5.0 to 5,0 and so we need to change it back
+        const rating_raw = '{{ score }}';
+        let rating;
+        if (rating_raw === 'None') {
+            rating = 0;
+        } else {
+            rating = (+rating_raw.replace(',', '.'));
+        }
+        $("#prof_rating").text(rating + "/5").css('color', '#444444');
+
+        // js for getting a plus and minus sign next to not collapsed and collapsed menus
+        // respectively, gotten from: https://www.tutorialrepublic.com/twitter-bootstrap-tutorial/bootstrap-accordion.php
+
+        $(document).ready(function () {
+            // Add minus icon for collapse element which is open by default
+            $(".collapse.show").each(function () {
+                $(this).prev(".card-header").find(".fa").addClass("fa-minus").removeClass("fa-plus");
+            });
+
+            // Toggle plus minus icon on show hide of collapse element
+            $(".collapse").on('show.bs.collapse', function () {
+                $(this).prev(".card-header").find(".fa").removeClass("fa-plus").addClass("fa-minus");
+            }).on('hide.bs.collapse', function () {
+                $(this).prev(".card-header").find(".fa").removeClass("fa-minus").addClass("fa-plus");
+            });
+        });
+
+    </script>
+
+{% endblock content %}
+
+

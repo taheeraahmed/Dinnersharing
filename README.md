@@ -3,8 +3,11 @@ A norwegian website created by using the Django framework. Here we were supposed
 
 This is the result after taking a course TDT4140 which is about agile software development. 
 
+In order to run this page as localhost you need to run the following script:
+<code>python3.9 manage.py runserver</code>
+
 Different "specs": 
-- Adminpage
+- Admin-page
 - Create profile
 - Create entry
 

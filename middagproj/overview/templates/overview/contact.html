@@ -1,0 +1,21 @@
+{% extends "overview/base.html"%}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="content-section">
+    <h1>Kontakt oss</h1>
+    <table style="width:100%" class="table ">
+        <tr>
+            <th scope="col">Brukernavn</th>
+            <th scope="col">Mail</th>
+        </tr>
+    {% for superuser in displaysuperusers%}
+        <tr>
+            <td> {{superuser.username}}</td>
+            <td> <a href="mailto:{{superuser.email}}">{{superuser.email}}</a>  </td>
+    {% endfor%}
+        </tr>
+    </table>
+</div>
+
+
+{% endblock content%}

@@ -1,0 +1,69 @@
+{% extends "overview/base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+    <form method="get">
+        <div class="form-group">
+            <div class="input-group">
+                {{ events_filter.form.search.label_tag }}
+                {% render_field events_filter.form.search class="form-control py-2 border-right-0 border" type="search" placeholder="Søk" %}
+                <span class="input-group-append">
+                    <button class="btn btn-outline-secondary border-left-0 border" type="submit">
+                        <i>⌕</i>
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample"
+                    aria-expanded="false" aria-controls="collapseExample">Filter ↓
+            </button>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    <h5>Mine allergier</h5>
+                    {#<small class="form-text text-muted">Huk av dine allergier</small>#}
+                    {% for allergy in events_filter.form.allergies %}
+                        {{ allergy }}
+                    {% endfor %}
+                    <div class="mb-2">
+                        <input class="btn btn-outline-danger btn-xs" type="button" onclick="uncheckAll()" value="Fjern valgte"/>
+                    </div>
+                    <h5>Plasser</h5>
+                    {{ events_filter.form.seats.label_tag }}
+                    {% render_field events_filter.form.seats class="form-control py-2 border-right-0 border" type="search" %}
+                    <button class="btn btn-outline-primary mt-2" type="submit">Søk</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% for event in events_filter.qs %}
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="{% url 'profile' event.user.id %}">{{ event.user }}</a>
+                    <!-- Vil kun funke hvis det er din egen bruker akkurat nå -->
+                    <small class="text-muted"> Gjester: {{ event.seats }}</small>
+                </div>
+                <h2><a class="article-title" href="{% url 'event:eventdetail' event.id %}">{{ event.title }}</a></h2>
+                <p class="article-content">Dato: {{ event.date | date:"F d, Y" }}</p>
+                <p class="article-content">Tid: {{ event.time }}</p>
+                <p class="article-content">Sted: {{ event.place }}</p>
+            </div>
+        </article>
+
+        {% empty %}
+        <article class="media content-section">
+            <div class="col-md-12 text-center">
+                <span class="display-1 d-block">😭</span>
+                <div class="my-4 lead">Dessverre fant vi ingen resultater for ditt søk</div>
+            </div>
+        </article>
+
+    {% endfor %}
+
+    <script type="text/javascript">
+        function uncheckAll() {
+            $("input[type='checkbox']:checked").prop("checked", false)
+        }
+    </script>
+
+{% endblock content %}

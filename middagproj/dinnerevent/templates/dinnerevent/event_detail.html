@@ -1,0 +1,116 @@
+{% extends "overview/base.html" %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load bootstrap4 %}
+{% block content %}
+    {% block extrahead %}
+        <title>Arrangement</title>
+    {% endblock extrahead %}
+    <div class="content-section">
+        <h1 class="card-title">{{ event.title }}</h1>
+        {% if user in event.guests.all and user not in user_has_made_event_review %}
+            <form action={% url 'event:review-create' event.pk %}>
+                <button class="btn btn-outline-primary">Gi en anmeldelse!</button>
+            </form>
+        {% elif user in event.guests.all and user in user_has_made_event_review %}
+            <button class="btn btn-sm btn-secondary  disabled">Du har allerede gitt dette arrangementet en anmeldelse
+            </button>
+        {% endif %}
+        <ul class="list-unstyled">
+            <li>Opprettet av: <a href="{% url 'profile' event.user.id %}">{{ event.user }}</a></li>
+            <li>Beskrivelse: {{ event.description }}</li>
+            <li>Plasser: {{ event.seats }}</li>
+            <li>Sted: {{ event.place }}</li>
+            <li>Dato: {{ event.date }}</li>
+            <li>Tid: {{ event.time }}</li>
+            <li>Kostnad: {{ event.expense }} kroner tilsammen</li>
+            <li>Ingredienser: {{ event.ingredients }}</li>
+            <li class="list-group mt-2"> Allergener:
+                <ul class="list-group">
+                    {% for allergy in event.allergies.all %}
+                        <li class="list-group-item"> {{ allergy }} </li>
+                    {% empty %}
+                        Ingen
+                    {% endfor %}
+                </ul>
+            </li>
+
+            <li class="list-group mt">Gjester:
+                <ul class="list-group mb-2">
+                    {% for guest in event.guests.all %}
+                        <li class="list-group-item"> <a href="{% url 'profile' guest.id %}">{{ guest.username }} </a></li>
+                    {% empty %}
+                        Ingen
+                    {% endfor %}
+                </ul>
+            </li>
+
+            {% if event.user != user %}
+                {% if user.is_authenticated and user not in event.guests.all %}
+                    <form action="{% url 'event:join' event.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" name="event_id" value={{ event.id }}, class="btn btn-primary pt-2">Meld deg
+                            på dette arrangementet
+                        </button>
+                    </form>
+                {% elif user.is_authenticated and user in event.guests.all %}
+                    <form action="{% url 'event:unjoin' event.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" name="event_id" value={{ event.id }}, class="btn btn-primary pt-2"
+                                style=background-color:red>Meld deg av dette arrangementet
+                        </button>
+                    </form>
+                {% endif %}
+            {% endif %}
+
+            {% if event.user == user %}
+                <form action="{% url 'event:event-update' event.pk %}">
+                    {% csrf_token %}
+                    <button class="btn btn-info btn-lg btn-block" type="submit"
+                            href=" {% url 'event:event-update' event.pk %}">Endre
+                    </button>
+                </form>
+                <form method='POST' action="{% url 'event:event-delete' event.pk %}">
+                    {% csrf_token %}
+                    <button class="btn btn-danger btn-lg btn-block mt-2" type="submit"
+                            href=" {% url 'event:event-delete' event.pk %}">Slett
+                    </button>
+                </form>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <fieldset class="form-group mt-2">
+                    <legend class="border-bottom mb 4">Comments</legend>
+                    {% for comment in event.comments.all %}
+                        <article class="media content-section">
+                            <div class="media-body">
+                                <div class="article-metadata">
+                                    <a class="mr-2" href="{% url 'profile' comment.user.id %}">{{ comment.user }}</a>
+                                </div>
+                                <p class="article-content">{{ comment.content }}</p>
+                            </div>
+                        </article>
+
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <legend class="border-bottom mb 4 mt-2">Add comment</legend>
+                        <div class="form-group">
+                       <textarea name="content" cols="40" rows="10"
+                                 maxlength="500" class="form-control"
+                                 placeholder="Content"
+                                 title="" required="" id="id_content"></textarea></div>
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    <button class="btn btn-outline-info" type="submit">Submit</button>
+                </div>
+            </form>
+
+        </ul>
+    </div>
+{% endblock content %}
+

@@ -1,0 +1,22 @@
+{% extends "overview/base.html"%}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class ="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb 4">Logg inn</legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Logg inn</button>
+            </div>
+        </form>
+        <div class="border-top pt-3">
+            {% comment %} TODO: sett inn lenke {% endcomment %}
+            <small class="text-muted">
+                Trenger du en bruker? <a class="ml-2" href="{% url 'register' %}">Registrer deg nå</a>
+            </small>
+        </div>
+    </div>
+{% endblock content%}
